@@ -10,6 +10,7 @@ function App() {
   const [showColors, setShowColors] = useState(false)
   const [sorting, setSorting] = useState<SortBy>(SortBy.NONE)
   const [filterCountry, setFilterCountry] = useState<string | null>(null)
+  const [deletedUsers, setDeletedUsers] = useState<string[]>([])
 
   const toggleColors = () => {
     setShowColors(!showColors)
@@ -21,10 +22,9 @@ function App() {
   }
 
   const handleReset = () => {
+    setDeletedUsers([]) // Reset deleted users list
     void refetch()
   }
-
-  const handleDelete = (email: string) => {}
 
   const filteredUsers = useMemo(() => {
     return filterCountry !== null && filterCountry.length > 0
@@ -37,22 +37,28 @@ function App() {
   }
 
   const sortedUsers = useMemo(() => {
-    if (sorting === SortBy.NONE) return filteredUsers
+    if (sorting === SortBy.NONE) return filteredUsers.filter(user => !deletedUsers.includes(user.email))
     const compareProperties: Record<string, (user: User) => any> = {
       [SortBy.COUNTRY]: user => user.location.country,
       [SortBy.NAME]: user => user.name.first,
       [SortBy.LAST]: user => user.name.last
     }
-    return filteredUsers.toSorted((a, b) => {
-      const extractProperty = compareProperties[sorting]
-      return extractProperty(a).localeCompare(extractProperty(b))
-    })
-  }, [filteredUsers, sorting])
+    return filteredUsers
+      .filter(user => !deletedUsers.includes(user.email))
+      .toSorted((a, b) => {
+        const extractProperty = compareProperties[sorting]
+        return extractProperty(a).localeCompare(extractProperty(b))
+      })
+  }, [filteredUsers, sorting, deletedUsers])
+
+  const handleDelete = (email: string) => {
+    setDeletedUsers(prevDeletedUsers => [...prevDeletedUsers, email])
+  }
 
   return (
     <div>
       <h1>React Query: Paginación, Infinite Scroll, DevTools</h1>
-      <Results />
+      <Results UsersList={sortedUsers} />
       <header>
         <button onClick={toggleColors}>Colorear Filas</button>
         <button onClick={toggleSortByCountry}>
@@ -89,4 +95,5 @@ function App() {
     </div>
   )
 }
+
 export default App

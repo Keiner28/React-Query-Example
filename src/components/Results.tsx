@@ -1,6 +1,8 @@
-import { useUsers } from '../hooks/useUsers'
+import { User } from '../types'
+type ResultsProps = {
+  UsersList: User[]
+}
 
-export const Results = () => {
-  const { users } = useUsers()
-  return <h3>Results {users.length}</h3>
+export const Results = ({ UsersList }: ResultsProps) => {
+  return <h3>Results: {UsersList.length}</h3>
 }
