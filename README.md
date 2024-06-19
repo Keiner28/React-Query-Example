@@ -14,7 +14,7 @@ This is a project demonstrating the use of React Query for data fetching, includ
 The project follows a typical React structure. Here is an overview of the key files:
 
 - **`src/components/`**: Contains all the React components for the application.
-  - **`Results.tsx`**: Component to display the results in a table format.
+  - **`Results.tsx`**: Component to display the number of results.
   - **`UsersList.tsx`**: Component to manage the list of users and handle interactions like sorting and filtering.
 - **`src/hooks/`**: Custom hooks for data fetching and state management.
   - **`useUsers.ts`**: Hook for fetching user data with React Query.
